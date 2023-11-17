@@ -2,8 +2,8 @@ import { format } from "date-fns";
 
 import prismadb from "@/lib/prismadb";
 
-import { BillboardClient } from "./components/client";
-import { BillboardColumn } from "./components/columns";
+import { CategoryClient } from "./components/client";
+import { CategoryColumn } from "./components/columns";
 
 const CategoriesPage = async ({
   params
@@ -14,21 +14,25 @@ const CategoriesPage = async ({
     where: {
       storeId: params.storeId
     },
+    include: {
+      billboard: true,
+    },
     orderBy: {
       createdAt: 'desc'
     }
   });
 
-  const formattedCategories: BillboardColumn[] = categories.map((item) => ({
+  const formattedCategories: CategoryColumn[] = categories.map((item) => ({
     id: item.id,
-    label: item.name,
+    name: item.name,
+    billboardLabel: item.billboard.label,
     createdAt: format(item.createdAt, "MMMM do, yyyy")
   }));
 
   return ( 
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <BillboardClient data={formattedCategories} />
+        <CategoryClient data={formattedCategories} />
       </div>
     </div>
    );
